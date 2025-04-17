@@ -30,10 +30,10 @@ import (
 	"sync"
 	"time"
 
-	l "github.com/perfana/x2i/logger"
 	_ "github.com/influxdata/influxdb1-client" // workaround from client documentation
 	client "github.com/influxdata/influxdb1-client/v2"
 	infc "github.com/influxdata/influxdb1-client/v2"
+	l "github.com/perfana/x2i/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -374,7 +374,6 @@ func StartProcessing(ctx context.Context, owg *sync.WaitGroup) {
 // and checks if it is successful
 func InitInfluxConnection(cmd *cobra.Command) error {
 	username, _ := cmd.Flags().GetString("username")
-	password, _ := cmd.Flags().GetString("password")
 	address, _ := cmd.Flags().GetString("address")
 	dbName, _ = cmd.Flags().GetString("database")
 	maxPoints, _ = cmd.Flags().GetUint("max-batch-size")
@@ -384,7 +383,6 @@ func InitInfluxConnection(cmd *cobra.Command) error {
 	c, err = infc.NewHTTPClient(infc.HTTPConfig{
 		Addr:          address,
 		Username:      username,
-		Password:      password,
 		UserAgent:     fmt.Sprintf("x2i-http-client-%s(%s)", cmd.Version, runtime.Version()),
 		Timeout:       time.Second * 60,
 		WriteEncoding: "gzip",
