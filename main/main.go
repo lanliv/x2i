@@ -46,7 +46,7 @@ func main() {
 
 	query := fmt.Sprintf(`
 	from(bucket: "%s")
-	|> range(start: -2d)
+	|> range(start: -10m)
 	|> filter(fn: (r) => r._measurement == "requests")
 	`, bucket)
 
@@ -61,9 +61,8 @@ func main() {
 	for result.Next() {
 		r := result.Record()
 
-		measurement := r.Measurement()
+		measurement := "gatling." + r.Measurement()
 		name := safeString(r.ValueByKey("name"))
-		nodeName := safeString(r.ValueByKey("nodeName"))
 		simulation := safeString(r.ValueByKey("simulation"))
 		resultVal := safeString(r.ValueByKey("result"))
 		errorMessage := escapeQuotes(safeString(r.ValueByKey("errorMessage")))
@@ -83,11 +82,10 @@ func main() {
 				{Timestamp: timestamp, Value: *value},
 			},
 			Resources: []Resource{
-				{Name: nodeName, Type: "host"},
+				{Name: "https://tui-observability.datadoghq.eu/", Type: "host"},
 			},
 			Tags: []string{
 				"name=" + name,
-				"nodeName=" + nodeName,
 				"simulation=" + simulation,
 				"result=" + resultVal,
 			},
@@ -96,8 +94,8 @@ func main() {
 		series = append(series, metric)
 
 		// Log raw input line
-		fmt.Printf("Line: %s,name=%s,nodeName=%s,simulation=%s,result=%s,errorMessage=%s,_value=%.2f %d\n",
-			measurement, name, nodeName, simulation, resultVal, errorMessage, *value, timestamp)
+		fmt.Printf("Line: %s,name=%s,simulation=%s,result=%s,errorMessage=%s,_value=%.2f %d\n",
+			measurement, name, simulation, resultVal, errorMessage, *value, timestamp)
 	}
 
 	if result.Err() != nil {
