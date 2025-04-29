@@ -46,7 +46,7 @@ func main() {
 
 	query := fmt.Sprintf(`
 	from(bucket: "%s")
-	|> range(start: -10m)
+	|> range(start: -60m)
 	|> filter(fn: (r) => r._measurement == "requests")
 	`, bucket)
 
