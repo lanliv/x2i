@@ -38,8 +38,8 @@ func main() {
 	bucket := "gatling"
 
 	// Datadog config
-	datadogAPIKey := "26ee9a57a7478f5bbf404345440ece6d"
-	datadogURL := "https://api.datadoghq.eu/api/v2/series"
+	datadogAPIKey := ""
+	datadogURL := ""
 
 	client := influxdb2.NewClient(influxUrl, influxToken)
 	defer client.Close()
